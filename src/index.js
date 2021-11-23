@@ -19,35 +19,34 @@ const creatMarkupCountry = country => {
   refs.countryInfo.insertAdjacentHTML('afterbegin', countryCard(country));
 };
 
-const onFetchCountries = () => {
-  newCountries
-    .fetchCountries()
-    .then(data => {
-      if (data.length > 10) {
-        Notify.info('Too many matches found. Please enter a more specific name.');
-        refs.countryInfo.innerHTML = '';
-        refs.countryList.innerHTML = '';
+const onFetchCountries = async () => {
+  try {
+    const data = await newCountries.fetchCountries();
 
-        return;
-      }
-      if (data.length > 1 && data.length <= 10) {
-        creatMarkupCountries(data);
-        refs.countryInfo.innerHTML = '';
-        return;
-      }
-      if (data.length === 1) {
-        creatMarkupCountry(data);
-        refs.countryList.innerHTML = '';
-        return;
-      }
-      if (data.status === 404) {
-        Notify.failure(`${data.status}!!! Oops, there is no country with that name`);
-      }
-    })
-    .catch(error => console.log(error.status));
+    if (data.length > 10) {
+      Notify.info('Too many matches found. Please enter a more specific name.');
+      refs.countryInfo.innerHTML = '';
+      refs.countryList.innerHTML = '';
+
+      return;
+    }
+    if (data.length > 1 && data.length <= 10) {
+      creatMarkupCountries(data);
+      refs.countryInfo.innerHTML = '';
+      return;
+    }
+    if (data.length === 1) {
+      creatMarkupCountry(data);
+      refs.countryList.innerHTML = '';
+      return;
+    }
+  } catch (error) {
+    Notify.failure(`Oops, there is no country with that name!!!${error.message}`);
+  }
 };
+//
 
-const onSearch = e => {
+const onSearch = async e => {
   refs.countryInfo.innerHTML = '';
   refs.countryList.innerHTML = '';
 

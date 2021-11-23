@@ -1,14 +1,20 @@
+import axios from 'axios';
+
 const BASE_URL = 'https://restcountries.com/v3.1';
+axios.defaults.baseURL = BASE_URL;
 
 export default class NewsCountries {
   constructor() {
     this.searchQuery = '';
   }
 
-  fetchCountries() {
-    return fetch(
-      `${BASE_URL}/name/${this.searchQuery}?fields=name,capital,population,flags,languages`,
-    ).then(respons => respons.json());
+  async fetchCountries() {
+    const response = await axios.get(
+      `/name/${this.searchQuery}?fields=name,capital,population,flags,languages`,
+    );
+    const dataNames = await response.data;
+
+    return dataNames;
   }
 
   get query() {
